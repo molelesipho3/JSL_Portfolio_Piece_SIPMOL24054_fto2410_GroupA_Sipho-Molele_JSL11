@@ -1,29 +1,6 @@
-// Helper functions
-function generateId() {
-  return Math.random().toString(36).substr(2, 9);
-}
-
-function createNewTask(task) {
-  const tasks = getTasks();
-  tasks.push(task);
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  return task;
-}
-
-function updateTask(updatedTask) {
-  const tasks = getTasks();
-  const index = tasks.findIndex(task => task.id === updatedTask.id);
-  if (index !== -1) {
-    tasks[index] = updatedTask;
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }
-}
-
-function deleteTask(taskId) {
-  const tasks = getTasks();
-  const filteredTasks = tasks.filter(task => task.id !== taskId);
-  localStorage.setItem('tasks', JSON.stringify(filteredTasks));
-}
+// Import taskFunctions and initialData
+import { getTasks, createNewTask, patchTask, deleteTask } from './utils/taskFunctions.js';
+import { initialData } from './initialData.js';
 
 // Initialize data
 function initializeData() {
@@ -33,7 +10,7 @@ function initializeData() {
   }
 }
 
-// Get elements from the DOM
+// Get DOM elements
 const elements = {
   headerBoardName: document.getElementById('header-board-name'),
   columnDivs: document.querySelectorAll('.column-div'),
@@ -52,6 +29,8 @@ const elements = {
   editSelectStatus: document.getElementById('edit-select-status'),
   saveTaskChangesBtn: document.getElementById('save-task-changes-btn'),
   deleteTaskBtn: document.getElementById('delete-task-btn'),
+  cancelEditBtn: document.getElementById('cancel-edit-btn'),
+  cancelAddTaskBtn: document.getElementById('cancel-add-task-btn'),
 };
 
 let activeBoard = "";
@@ -160,11 +139,9 @@ function addTaskToUI(task) {
 
 // Setup event listeners
 function setupEventListeners() {
-  const cancelEditBtn = document.getElementById('cancel-edit-btn');
-  cancelEditBtn.addEventListener('click', () => toggleModal(false, elements.editTaskModal));
+  elements.cancelEditBtn.addEventListener('click', () => toggleModal(false, elements.editTaskModal));
 
-  const cancelAddTaskBtn = document.getElementById('cancel-add-task-btn');
-  cancelAddTaskBtn.addEventListener('click', () => {
+  elements.cancelAddTaskBtn.addEventListener('click', () => {
     toggleModal(false);
     elements.filterDiv.style.display = 'none';
   });
@@ -194,14 +171,16 @@ function toggleModal(show, modal = elements.modalWindow) {
   modal.style.display = show ? 'block' : 'none';
 }
 
-// Toggle sidebar
+// Toggle sidebar (Fixed functionality)
 function toggleSidebar(show) {
   const sidebar = document.querySelector('.side-bar');
   if (show) {
     sidebar.style.display = 'flex';
+    elements.showSideBarBtn.style.display = 'none';
     localStorage.setItem('showSideBar', 'true');
   } else {
     sidebar.style.display = 'none';
+    elements.showSideBarBtn.style.display = 'block';
     localStorage.setItem('showSideBar', 'false');
   }
 }
@@ -237,18 +216,31 @@ function saveTaskChanges(taskId) {
     status: elements.editSelectStatus.value,
     board: activeBoard,
   };
-
-  updateTask(updatedTask);
+  patchTask(taskId, updatedTask);
   toggleModal(false, elements.editTaskModal);
   refreshTasksUI();
 }
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', function() {
-  init();
-});
+// Add task
+function addTask(event) {
+  event.preventDefault();
+  const task = {
+    id: new Date().getTime(),
+    title: elements.titleInput.value,
+    description: elements.descInput.value,
+    status: elements.selectStatus.value,
+    board: activeBoard,
+  };
+  createNewTask(task);
+  addTaskToUI(task);
+  toggleModal(false);
+  elements.filterDiv.style.display = 'none';
+  event.target.reset();
+  refreshTasksUI();
+}
 
-function init() {
+// Initialize app
+document.addEventListener('DOMContentLoaded', function () {
   initializeData();
   setupEventListeners();
   const showSidebar = localStorage.getItem('showSideBar') === 'true';
@@ -256,4 +248,4 @@ function init() {
   const isLightTheme = localStorage.getItem('light-theme') === 'enabled';
   document.body.classList.toggle('light-theme', isLightTheme);
   fetchAndDisplayBoardsAndTasks();
-}
+});
