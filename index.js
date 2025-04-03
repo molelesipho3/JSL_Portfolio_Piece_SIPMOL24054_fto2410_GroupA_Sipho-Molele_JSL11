@@ -11,22 +11,12 @@ import { initialData } from './initialData.js';
 // Function checks if local storage already has data, if not it loads initialData to localStorage
 function initializeData() {
   if (!localStorage.getItem('tasks')) {
-    console.log("Setting initial data in localStorage...");
-    console.log("Initial Data:", initialData);
-
     localStorage.setItem('tasks', JSON.stringify(initialData)); 
     localStorage.setItem('showSideBar', 'true')
   } else {
     console.log('Data already exists in localStorage');
   }
 }
-
-function clearLocalStorage() {
-  localStorage.clear();
-  console.log("Local storage cleared.");
-  location.reload(); // Reload the page to reflect changes
-}
-document.getElementById('clear-local-storage').addEventListener('click', clearLocalStorage);
 
 // TASK: Get elements from the DOM
 const elements = {
@@ -68,6 +58,10 @@ function fetchAndDisplayBoardsAndTasks() {
 
 // Creates different boards in the DOM
 // TASK: Fix Bugs
+/** 
+*@param {string} boardName
+*/
+
 function displayBoards(boards) {
   const boardsContainer = document.getElementById("boards-nav-links-div");
   boardsContainer.innerHTML = '<h4 id="headline-sidepanel">ALL BOARDS</h4>'; // Clears the container but keeps the heading
@@ -123,14 +117,13 @@ function filterAndDisplayTasksByBoard(boardName) {
   });
 }
 
+/** 
+*@param {string} boardName
+*/
 
 function refreshTasksUI() {
   filterAndDisplayTasksByBoard(activeBoard);
 }
-
-/** 
-*@param {string} boardName
-*/
 
 // Styles the active board by adding an active class
 // TASK: Fix Bugs
