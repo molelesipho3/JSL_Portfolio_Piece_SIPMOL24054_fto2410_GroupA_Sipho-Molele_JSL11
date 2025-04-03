@@ -12,9 +12,13 @@ import { initialData } from './initialData.js';
 function initializeData() {
   if (!localStorage.getItem('tasks')) {
     localStorage.setItem('tasks', JSON.stringify(initialData)); 
-    localStorage.setItem('showSideBar', 'true')
+    localStorage.setItem('showSideBar', 'true');
+    console.log('Initialized localStorage with initialData:', initialData);
   } else {
     console.log('Data already exists in localStorage');
+    // Force reinitialize data for testing - remove this in production
+    localStorage.setItem('tasks', JSON.stringify(initialData));
+    console.log('Reinitialized localStorage with initialData for testing');
   }
 }
 
@@ -249,6 +253,13 @@ function toggleSidebar(show) {
   sidebarElement.classList.toggle('show-sidebar', show);
   elements.showSideBarBtn.style.display = show ? 'none' : 'block';
   localStorage.setItem('showSideBar', show.toString());
+  
+  // Force display style to ensure sidebar visibility
+  if (show) {
+    sidebarElement.style.display = 'flex';
+  } else {
+    sidebarElement.style.display = 'none';
+  }
 }
 
 function toggleTheme() {
