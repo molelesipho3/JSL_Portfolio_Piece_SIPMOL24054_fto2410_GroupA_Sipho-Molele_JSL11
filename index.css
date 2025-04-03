@@ -27,7 +27,7 @@ body {
   min-height: 100vh;
   flex-direction: row;
   margin: 0;
-  /*border: 5px solid red;*/
+  /* border: 5px solid red; */
   background-color: var(--secondary-color);
   box-sizing: border-box;
   width: 100%;
@@ -47,9 +47,9 @@ body {
 .side-bar {
   /*  */
   background-color: var(--primary-color);
-  /*border: 5px solid rgb(0, 0, 0);*/
+  /* border: 5px solid rgb(0, 0, 0); */
   border-right: 0.1px solid #979797;
-  /*flex: 0.8;*/
+  /* flex: 0.8; */
   display: none;
   flex-direction: column;
   gap: 50px;
