@@ -1,4 +1,4 @@
-// utils/taskFunction.js
+// utils/taskFunctions.js
 
 // Simulate fetching tasks from localStorage
 export const getTasks = () => {
